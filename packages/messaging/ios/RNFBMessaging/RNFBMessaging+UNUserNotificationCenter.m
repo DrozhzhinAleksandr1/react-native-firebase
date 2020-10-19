@@ -64,24 +64,27 @@ struct {
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler {
-  if (notification.request.content.userInfo[@"gcm.message_id"]) {
-    NSDictionary *notificationDict = [RNFBMessagingSerializer notificationToDict:notification];
-
-    // Don't send an event if contentAvailable is true - application:didReceiveRemoteNotification will send the event
-    // for us, we don't want to duplicate them
-    if (!notificationDict[@"contentAvailable"]) {
-      [[RNFBRCTEventEmitter shared] sendEventWithName:@"messaging_message_received" body:notificationDict];
-    }
-
-    // TODO in a later version allow customising completion options in JS code
-    completionHandler(UNNotificationPresentationOptionNone);
-  }
-
-  if (_originalDelegate != nil && originalDelegateRespondsTo.willPresentNotification) {
-    [_originalDelegate userNotificationCenter:center willPresentNotification:notification withCompletionHandler:completionHandler];
-  } else {
-    completionHandler(UNNotificationPresentationOptionNone);
-  }
+    
+    completionHandler( UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert );
+    
+//  if (notification.request.content.userInfo[@"gcm.message_id"]) {
+//    NSDictionary *notificationDict = [RNFBMessagingSerializer notificationToDict:notification];
+//
+//    // Don't send an event if contentAvailable is true - application:didReceiveRemoteNotification will send the event
+//    // for us, we don't want to duplicate them
+//    if (!notificationDict[@"contentAvailable"]) {
+//      [[RNFBRCTEventEmitter shared] sendEventWithName:@"messaging_message_received" body:notificationDict];
+//    }
+//
+//    // TODO in a later version allow customising completion options in JS code
+//    completionHandler(UNNotificationPresentationOptionNone);
+//  }
+//
+//  if (_originalDelegate != nil && originalDelegateRespondsTo.willPresentNotification) {
+//    [_originalDelegate userNotificationCenter:center willPresentNotification:notification withCompletionHandler:completionHandler];
+//  } else {
+//    completionHandler(UNNotificationPresentationOptionNone);
+//  }
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(void))completionHandler {
